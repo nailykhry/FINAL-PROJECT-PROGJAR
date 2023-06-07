@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+import json
 
 class UserDatabase:
     def __init__(self, host='localhost', port=27017, database='edu-airy', collection='users'):
@@ -7,7 +8,8 @@ class UserDatabase:
         self.collection = self.db[collection]
 
     def insert_user(self, data):
-        result = self.collection.insert_one(data)
+        data_dict = json.loads(data)
+        result = self.collection.insert_one(data_dict)
         return result.inserted_id
     
     def find_user_by_email(self, email):
@@ -19,18 +21,18 @@ class UserDatabase:
         self.client.close()
 
 
-# Membuat instance kelas UserDatabase
-user_db = UserDatabase()
+# # Membuat instance kelas UserDatabase
+# user_db = UserDatabase()
 
-# Data yang ingin dimasukkan ke koleksi "users"
-data = {'nama': 'naily aja'}
+# # Data yang ingin dimasukkan ke koleksi "users"
+# data = {'nama': 'naily aja'}
 
-# Memasukkan data ke koleksi "users"
-# inserted_id = user_db.insert_user(data)
-# print("Data berhasil dimasukkan. ID:", inserted_id)
+# # Memasukkan data ke koleksi "users"
+# # inserted_id = user_db.insert_user(data)
+# # print("Data berhasil dimasukkan. ID:", inserted_id)
 
-user = user_db.find_user_by_email("nailykhairiya@gmail.com")
-print(user)
+# user = user_db.find_user_by_email("nailykhairiya@gmail.com")
+# print(user)
 
-# Menutup koneksi ke MongoDB
-user_db.close_connection()
+# # Menutup koneksi ke MongoDB
+# user_db.close_connection()

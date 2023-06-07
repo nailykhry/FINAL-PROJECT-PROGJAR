@@ -4,8 +4,8 @@ SECRET_KEY = 'secret_key'
 
 class AuthClass:
     @staticmethod
-    def generate_token(username):
-        payload = {'username': username}
+    def generate_token(id, name, email, role):
+        payload = {'id': id, 'name': name, 'email': email, 'role': role}
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
         return token
 
@@ -17,13 +17,13 @@ class AuthClass:
         except jwt.InvalidTokenError:
             return None
 
-    @staticmethod
-    def login(username, password):
-        if username == 'john' and password == 'secret':
-            token = AuthClass.generate_token(username)
-            return token
+    # @staticmethod
+    # def login(username, password):
+    #     if username == 'john' and password == 'secret':
+    #         token = AuthClass.generate_token(username)
+    #         return token
 
-        return None
+    #     return None
 
     @staticmethod
     def protected(token):
@@ -33,15 +33,24 @@ class AuthClass:
             return f"Welcome, {payload['username']}! This is a protected route."
 
         return "Invalid token."
+    
+    @staticmethod
+    def verify_token(token):
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+            return True
+        except jwt.InvalidTokenError:
+            return False
+        
 
 
-# Login dan dapatkan token
-token = AuthClass.login('john', 'secret')
-if token:
-    print("Token:", token)
-else:
-    print("Invalid username or password.")
+# # Login dan dapatkan token
+# token = AuthClass.login('john', 'secret')
+# if token:
+#     print("Token:", token)
+# else:
+#     print("Invalid username or password.")
 
-# Gunakan token untuk mengakses rute yang dilindungi
-response = AuthClass.protected(token)
-print(response)
+# # Gunakan token untuk mengakses rute yang dilindungi
+# response = AuthClass.protected(token)
+# print(response)

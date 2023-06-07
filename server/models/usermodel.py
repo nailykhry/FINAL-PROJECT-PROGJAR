@@ -14,6 +14,3 @@ class UserModel:
             'role': self.role
         })
 
-# Membuat objek model
-model = UserModel("John", "ewubofew", "ocwefow", "siswa")
-print(model.to_json())
