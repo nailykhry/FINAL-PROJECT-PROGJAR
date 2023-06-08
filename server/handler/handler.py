@@ -2,6 +2,7 @@ import os
 from handler.authhandler import AuthHandler
 from handler.dashboard import DashboardClass
 from handler.status import StatusClass
+from handler.coursehandler import CourseClass
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -18,34 +19,36 @@ class HandlerClass():
     def run(self):
         data = self.data
         request_header = data.split('\r\n')
+        self.header = request_header
         request_file = request_header[0].split()[1]
         method = request_header[0].split()[0]
         response_header = b''
         response_data = b''
         
-        if method == 'GET' and (request_file == '/' or request_file == '/index.html'):
+        if (method == 'GET' or method == 'HEAD') and (request_file == '/' or request_file == '/index.html'):
             self.index()
         
         # AUTH
-        elif method == 'GET' and (request_file == '/login'):
+        elif method == 'GET' and request_file == '/login':
             auth = AuthHandler(self.client)
             auth.get_login()
             
-        elif method == 'POST' and (request_file == '/login'):
+        elif method == 'POST' and request_file == '/login':
             auth = AuthHandler(self.client)
             token = auth.user_login(self.data) 
             self.token = token
         
-        elif method == 'GET' and (request_file == '/register'):
+        elif method == 'GET' and request_file == '/register':
             auth = AuthHandler(self.client)
             auth.get_register()  
         
-        elif method == 'POST' and (request_file == '/register'):
+        elif method == 'POST' and request_file == '/register':
             auth = AuthHandler(self.client)
             auth.user_register(self.data)  
         # END AUTH
            
-        elif method == 'GET' and (request_file == '/dashboard'):
+        # DASHBOARD
+        elif method == 'GET' and request_file == '/dashboard':
             Auth = AuthHandler(self.client)
             token = Auth.get_bearer_code(self.data)
             
@@ -58,8 +61,25 @@ class HandlerClass():
                 dashboard.get_dashboard()
             else:
                 self.redirect_to_page('/login')
+        # END DASHBOARD
+        
+        #COURSE
+        elif method == 'GET' and request_file == '/addcourse' :
+            course = CourseClass(self.client)
+            course.get_add_course()
             
-        elif method == 'GET' and (request_file == '/500'):
+        elif method == 'POST' and request_file == '/course' :
+            course = CourseClass(self.client)
+            course.post_add_course(self.data)
+        
+        #END COURSE
+        
+        #STATUS
+        elif method == 'GET' and request_file == '/200' :
+            status = StatusClass(self.client)
+            status.status_200()
+        
+        elif method == 'GET' and request_file == '/500' :
             status = StatusClass(self.client)
             status.status_500()
         
@@ -85,6 +105,12 @@ class HandlerClass():
             + str(content_length) + '\r\n\r\n'
             
         # send
-        self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))      
+        method = self.header[0].split()[0]
+        
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else :
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
+              
         
    
