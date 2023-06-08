@@ -3,6 +3,7 @@ from handler.authhandler import AuthHandler
 from handler.dashboard import DashboardClass
 from handler.status import StatusClass
 from handler.coursehandler import CourseClass
+from handler.materialhandler import MaterialClass
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -29,7 +30,7 @@ class HandlerClass():
             self.index()
         
         # AUTH
-        elif method == 'GET' and request_file == '/login':
+        elif (method == 'GET' or method == 'HEAD') and request_file == '/login':
             auth = AuthHandler(self.client)
             auth.get_login()
             
@@ -38,7 +39,7 @@ class HandlerClass():
             token = auth.user_login(self.data) 
             self.token = token
         
-        elif method == 'GET' and request_file == '/register':
+        elif (method == 'GET' or method == 'HEAD') and request_file == '/register':
             auth = AuthHandler(self.client)
             auth.get_register()  
         
@@ -48,7 +49,7 @@ class HandlerClass():
         # END AUTH
            
         # DASHBOARD
-        elif method == 'GET' and request_file == '/dashboard':
+        elif (method == 'GET' or method == 'HEAD') and request_file == '/dashboard':
             Auth = AuthHandler(self.client)
             token = Auth.get_bearer_code(self.data)
             
@@ -64,7 +65,7 @@ class HandlerClass():
         # END DASHBOARD
         
         #COURSE
-        elif method == 'GET' and request_file == '/addcourse' :
+        elif (method == 'GET' or method == 'HEAD') and request_file == '/addcourse' :
             course = CourseClass(self.client)
             course.get_add_course()
             
@@ -74,12 +75,19 @@ class HandlerClass():
         
         #END COURSE
         
+        # MATERIAL
+        elif (method == 'GET' or method == 'HEAD') and request_file.startswith('/course/'):
+            materials = MaterialClass(self.client)
+            materials = materials.get_material_by_courseid(self.data)
+            
+        # END MATERIAL    
+        
         #STATUS
-        elif method == 'GET' and request_file == '/200' :
+        elif (method == 'GET' or method == 'HEAD') and request_file == '/200' :
             status = StatusClass(self.client)
             status.status_200()
         
-        elif method == 'GET' and request_file == '/500' :
+        elif (method == 'GET' or method == 'HEAD') and request_file == '/500' :
             status = StatusClass(self.client)
             status.status_500()
         

@@ -1,5 +1,5 @@
 from database.db import Database
-
+import json
 class MaterialsRepo():
     def __init__(self, data=''):
         self.data = data
@@ -10,10 +10,9 @@ class MaterialsRepo():
         material.close_connection()
         return idMaterial
     
-    def get_all_material(self):
+    def get_all_material_by_courseid(self, courseid):
         materialObj = Database(collection="materials")
-        materials = materialObj.get_all()
-        materialObj.close_connection()
+        materials = materialObj.find_collection_by_courseid(courseid)
         return materials
-    
+
         
