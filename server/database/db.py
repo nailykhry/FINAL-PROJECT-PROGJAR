@@ -1,13 +1,13 @@
 from pymongo import MongoClient
 import json
 
-class UserDatabase:
+class Database:
     def __init__(self, host='localhost', port=27017, database='edu-airy', collection='users'):
         self.client = MongoClient(f'mongodb://{host}:{port}')
         self.db = self.client[database]
         self.collection = self.db[collection]
 
-    def insert_user(self, data):
+    def insert_data(self, data):
         data_dict = json.loads(data)
         result = self.collection.insert_one(data_dict)
         return result.inserted_id
@@ -16,6 +16,10 @@ class UserDatabase:
         query = {'email': email}
         user = self.collection.find_one(query)
         return user
+    
+    def get_all(self):
+        collections = self.collection.find()
+        return collections
 
     def close_connection(self):
         self.client.close()

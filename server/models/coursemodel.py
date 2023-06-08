@@ -9,7 +9,3 @@ class CourseModel:
             'name': self.name,
             'description': self.description,
         })
-
-# Membuat objek model
-model = CourseModel("IPA", "mempelajari ilmu alam")
-print(model.to_json())

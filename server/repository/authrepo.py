@@ -1,16 +1,16 @@
-from database.db import UserDatabase
+from database.db import Database
 from security.hash import HashClass
 from security.auth import AuthClass
 import multiprocessing
 import bcrypt
 
 class AuthRepo():
-    def __init__(self, data):
+    def __init__(self, data=''):
         self.data = data
         
     def insert_user_with_timeout(self, timeout):
-        user = UserDatabase()
-        idUser = user.insert_user(self.data)
+        user = Database()
+        idUser = user.insert_data(self.data)
         user.close_connection()
         return idUser
 
@@ -34,7 +34,7 @@ class AuthRepo():
             return 500  
         
     def login(self, email, password) :
-        user = UserDatabase()
+        user = Database()
         user = user.find_user_by_email(email)
         
         # Password yang dimasukkan oleh pengguna
@@ -47,7 +47,6 @@ class AuthRepo():
         is_verified = HashClass.verify_password(input_password, hashed_password)
         if is_verified:
             token = AuthClass.generate_token(str(user['_id']), user['name'], user['email'], user['role'])
-            # print("repoooooooooooo", token)
             return token
         else:
             return None
