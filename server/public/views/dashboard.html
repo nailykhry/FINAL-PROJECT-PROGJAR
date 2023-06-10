@@ -9,7 +9,7 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark ps-5 shadow fixed-top" style="background-color: #6870CB;">
+    <nav class="shadow navbar navbar-expand-lg navbar-dark ps-5 fixed-top" style="background-color: #6870CB;">
         <a class="navbar-brand" href="#">Classroom</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -37,46 +37,15 @@
         <h3 style="font-weight: bold;">Welcome to</h3>
         <h1 style="font-size: 50px; font-weight: bold; color:#6870CB;">Dashboard Classroom</h1>
     </div>
-    
-    <h1>Courses:</h1>
-    <ul>
-        {course_list}
-    </ul>
-    <h1>{add_course_admin}</h1>
 
     <!-- Button Add Course -->
-    <button class="btn mx-5 mb-3" style="background-color: #6870CB; color: white; border: none;">+ Course</button>
+    <div>
+      {add_course_admin}
+    </div>
 
     <!-- Card Course -->
-    <div class="row mx-5">
-      <div class="card col-2 text-center shadow m-2" style="border: none;">
-        <div style="background-color: #84b6ff; height: 100px;"></div>
-        <div class="card-body">
-          <p class="card-subtitle text-muted">Id Course</p>
-          <h5 class="card-title">Course Name</h5>
-        </div>
-      </div>
-      <div class="card col-2 text-center shadow m-2" style="border: none;">
-        <div style="background-color: #85ebdd; height: 100px;"></div>
-        <div class="card-body">
-          <p class="card-subtitle text-muted">Id Course</p>
-          <h5 class="card-title">Course Name</h5>
-        </div>
-      </div>
-      <div class="card col-2 text-center shadow m-2" style="border: none;">
-        <div style="background-color: #8071dd; height: 100px;"></div>
-        <div class="card-body">
-          <p class="card-subtitle text-muted">Id Course</p>
-          <h5 class="card-title">Course Name</h5>
-        </div>
-      </div>
-      <div class="card col-2 text-center shadow m-2" style="border: none;">
-        <div style="background-color: #ff4a88; height: 100px;"></div>
-        <div class="card-body">
-          <p class="card-subtitle text-muted">Id Course</p>
-          <h5 class="card-title">Course Name</h5>
-        </div>
-      </div>
+    <div class="mx-5 row">
+      {course_list}
     </div>
 </body>
 </html>
