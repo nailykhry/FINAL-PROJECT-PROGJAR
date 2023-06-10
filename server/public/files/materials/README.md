@@ -1,4 +1,25 @@
-------WebKitFormBoundaryu3KNvqoshOxOmkxU
+POST /material HTTP/1.1
+Host: localhost:9999
+Connection: keep-alive
+Content-Length: 3016
+Cache-Control: max-age=0
+sec-ch-ua: "Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "Windows"
+Upgrade-Insecure-Requests: 1
+Origin: http://localhost:9999
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryWh5ncUZGGXbh8mcN
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost:9999/addmaterial/6484ab7d96e103d43b7a5942
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9,id;q=0.8
+
+------WebKitFormBoundaryWh5ncUZGGXbh8mcN
 Content-Disposition: form-data; name="filename"; filename="README.md"
 Content-Type: application/octet-stream
 
@@ -68,4 +89,4 @@ Berikut adalah demo dari Ruang Anime:
 
 ![Ruang Anime Demo](https://youtu.be/_5YoDfZlYHI)
 
-------WebKitFormBoundaryu3KNvqoshOxOmkxU--
+------WebKitFormBoundaryWh5ncUZGGXbh8mcN--

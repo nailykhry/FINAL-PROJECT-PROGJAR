@@ -32,6 +32,13 @@ class HandlerClass():
         if (method == 'GET' or method == 'HEAD') and (request_file == '/' or request_file == '/index.html'):
             self.index()
         
+        # MOVED PERMANENTLY
+        
+        if (method == 'GET' or method == 'HEAD') and (request_file == '/index.php'):
+            response_header = 'HTTP/1.1 301 Moved Permanently\nLocation: /index.html\r\n\r\n'
+            response_data = ''
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
+        
         # AUTH
         elif (method == 'GET' or method == 'HEAD') and request_file == '/login':
             auth = AuthHandler(self.client)
@@ -116,7 +123,6 @@ class HandlerClass():
                 if not ndata or (b'--\r\n' in ndata) :
                     break
                 
- 
             filepath = os.path.join(BASE_DIR, "..", "public", "files", "materials", file_value)
             with open(filepath, 'wb') as file:
                 file.write(received_data)
