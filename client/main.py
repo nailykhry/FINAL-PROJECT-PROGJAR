@@ -1,5 +1,6 @@
 import socket
 import os
+from urllib.parse import unquote
 from inputhandler import InputHandler
 from bs4 import BeautifulSoup
 
@@ -37,35 +38,39 @@ class Parser:
             header += data
             if b'\r\n\r\n' in header:
                 break
-        header = header.decode('utf-8')
-        return header
+        try:
+            header_str = header.decode('utf-8')
+            return header, header_str
+        except UnicodeDecodeError as e:
+            decoded_header = header[:e.start]
+            return header, decoded_header.decode('utf-8')
     
     def add_body(self, request_header, data):
         return request_header + data.encode('utf-8') 
     
-    def download_file(self, filename):
+    def download_file(self, header, filename):
         if not os.path.exists('downloads'):
             os.mkdir('downloads')
             
         filepath = os.path.join(BASE_DIR, "downloads", filename)
         
         with open(filepath, 'wb') as f:
+            f.write(header)
             while True:
                 data = self.socket.recv(self.size)
-                if not data:
-                    break
                 f.write(data)
+                if not data or (b'EOF\r\n' in data):
+                    break
+                
+                
     
     def parsing_html(self, header):
-
         response = b''
         while True:
             received = self.socket.recv(self.size)
             if not received:
                 break
-            
             response += received
-            
             if (b'\r\n</html>' in received) :
                 break
         
@@ -105,11 +110,13 @@ if __name__ == '__main__':
             request_header = client.add_body(request_header, 'name={}&email={}&password={}'.format(name, email, password))
 
     client.send_request(request_header)
-    header = client.get_header()
+    b_header, header = client.get_header()
     status_code = client.get_status_code(header)
-    
     if status_code == '302' :
         print(header)
+    elif method == 'GET' and request_file.startswith('/material/') :
+        filename = unquote(request_file.split('/')[-1])
+        client.download_file(b_header, filename)
     else :
         print(client.parsing_html(header))
         
