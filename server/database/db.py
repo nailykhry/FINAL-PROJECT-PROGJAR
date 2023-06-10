@@ -20,6 +20,11 @@ class Database:
     def get_all(self):
         collections = self.collection.find()
         return collections
+    
+    def find_collection_by_courseid(self, id):
+        query = {'id_course': id}
+        collections = self.collection.find(query)
+        return collections
 
     def close_connection(self):
         self.client.close()
