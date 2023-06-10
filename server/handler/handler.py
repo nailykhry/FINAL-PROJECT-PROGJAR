@@ -27,7 +27,7 @@ class HandlerClass():
         method = request_header[0].split()[0]
         response_header = b''
         response_data = b''
-        
+        print(data)
         if (method == 'GET' or method == 'HEAD') and (request_file == '/' or request_file == '/index.html'):
             self.index()
         
@@ -116,7 +116,7 @@ class HandlerClass():
                     break
                 received_data += ndata
  
-            filepath = os.path.join(BASE_DIR, "..", "public", "files", file_value)
+            filepath = os.path.join(BASE_DIR, "..", "public", "files", "materials", file_value)
             with open(filepath, 'wb') as file:
                 file.write(received_data)
             
