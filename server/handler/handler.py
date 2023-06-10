@@ -1,5 +1,6 @@
 import os
 import re
+from urllib.parse import unquote
 from handler.authhandler import AuthHandler
 from handler.dashboard import DashboardClass
 from handler.status import StatusClass
@@ -88,8 +89,15 @@ class HandlerClass():
         elif (method == 'POST') and request_file == '/material':
             received_data = b""
             file_value = ''
+            filename_match = re.search(r'filename=(.+)', data)
+            if filename_match:
+                filename = unquote(filename_match.group(1))
+                print(filename)
+                flag = False
+            else:
+                flag = True
             
-            flag = True
+            
             while True:
                 ndata = self.client.recv(self.size)
                 if flag ==  True :
@@ -98,7 +106,7 @@ class HandlerClass():
                         file_value = file_match.group(1).decode('utf-8')
                     else:
                         file_value = None
-                        
+   
                     flag = False
                 if not ndata or (b'--\r\n' in ndata) :
                     break
