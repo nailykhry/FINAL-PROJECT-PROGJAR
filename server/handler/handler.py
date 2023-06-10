@@ -1,4 +1,5 @@
 import os
+import re
 from handler.authhandler import AuthHandler
 from handler.dashboard import DashboardClass
 from handler.status import StatusClass
@@ -79,7 +80,40 @@ class HandlerClass():
         elif (method == 'GET' or method == 'HEAD') and request_file.startswith('/course/'):
             materials = MaterialClass(self.client)
             materials = materials.get_material_by_courseid(self.data)
+        
+        elif (method == 'GET' or method == 'HEAD') and request_file.startswith('/addmaterial/'):
+            materials = MaterialClass(self.client)
+            materials = materials.get_add_material()
+        
+        elif (method == 'POST') and request_file == '/material':
+            received_data = b""
+            file_value = ''
             
+            flag = True
+            while True:
+                ndata = self.client.recv(self.size)
+                if flag ==  True :
+                    file_match = re.search(rb'filename="([^"]+)"', ndata)
+                    if file_match:
+                        file_value = file_match.group(1).decode('utf-8')
+                    else:
+                        file_value = None
+                        
+                    flag = False
+                if not ndata or (b'--\r\n' in ndata) :
+                    break
+                received_data += ndata
+ 
+            filepath = os.path.join(BASE_DIR, "..", "public", "files", file_value)
+            with open(filepath, 'wb') as file:
+                file.write(received_data)
+            
+            materials = MaterialClass(self.client)
+            materials = materials.post_add_material(self.data, file_value)
+                    
+            self.redirect_to_page('/200')
+          
+        
         # END MATERIAL    
         
         #STATUS

@@ -20,11 +20,11 @@ class MaterialClass :
         f.close()
         
         # perbarui data dengan list course sesungguhnya
-        material_list = "".join(f'<li><a href="/material/{material["_id"]}">{material["name"]}</a></li>' for material in materials)
+        material_list = "".join(f'<li><a href="/material/{material["_id"]}">{material["filename"]}</a></li>' for material in materials)
         response_data = response_data.replace('{material_list}', material_list)
         
         # kalau bukan admin nanti dihide aja
-        response_data = response_data.replace('{add_material_admin}', '<a href="/addmaterial">Tambahkan Material</a>')
+        response_data = response_data.replace('{add_material_admin}', '<a href="/addmaterial/{}">Tambahkan Material</a>'.format(_id))
 
         content_length = len(response_data)
         response_header = 'HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\nContent-Length:' \
@@ -48,26 +48,22 @@ class MaterialClass :
         # send
         self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
         
-    # def post_add_material(self, data):
-    #     request_header = data.split('\r\n\r\n')[0]
-    #     body = unquote(data.split('\r\n\r\n')[1])
-    #     # ganti + jadi spasi biasa
-    #     body = body.replace('+', ' ')
+    def post_add_material(self, header, filename):
+        # split dulu 
+        referer = header.split('Referer: ')[1].split('\r\n')[0]
+        id_course = referer.split('/')[-1]
+        id_user = 'weiyvfgewigfiew'
+ 
+        model = MaterialModel(id_course, id_user, filename)
+        json = model.to_json()
         
-    #     # split dulu 
-    #     name = body.split('name=')[1].split('&')[0]
-    #     description = body.split('description=')[1].split()[0]
+        repo = MaterialsRepo(json)
+        err = repo.insert_material()
         
-    #     model = CourseModel(name, description)
-    #     json = model.to_json()
-        
-    #     repo = CoursesRepo(json)
-    #     err = repo.insert_course()
-        
-    #     if err == 200 :
-    #         self.redirect_to_page('/200')
-    #     elif err == 500 :
-    #         self.redirect_to_page('/500')
+        if err == 200 :
+            self.redirect_to_page('/200')
+        elif err == 500 :
+            self.redirect_to_page('/500')
             
     def redirect_to_page(self, url):
         response_header = 'HTTP/1.1 302 Found\nLocation: {}\r\n\r\n'.format(url)
