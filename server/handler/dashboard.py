@@ -37,6 +37,7 @@ class DashboardClass :
         response_header = 'HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\nContent-Length:' \
             + str(content_length) + '\r\n'
         response_header += f'Authorization: {self.token}\r\n'
+        # response_header += 'Set-Cookie:{}; Path=/\r\n'.format(self.token)
         response_header += '\r\n'
 
         # send

@@ -9,6 +9,12 @@ class CourseClass :
         self.client = client
         
     def get_add_course(self):
+        header_cookie = self.headers.get('Cookie')
+        cookie = cookies.SimpleCookie()
+        cookie.load(header_cookie)
+        token = cookie.get('token').value if 'token' in cookie else None
+        print(token)
+        
         f = open(os.path.join(
         BASE_DIR, '../public/views/addcourse.html'), 'r', newline='')
         response_data = f.read()

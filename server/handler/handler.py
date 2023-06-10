@@ -62,7 +62,7 @@ class HandlerClass():
         elif (method == 'GET' or method == 'HEAD') and request_file == '/dashboard':
             Auth = AuthHandler(self.client)
             token = Auth.get_bearer_code(self.data)
-            
+     
             self.token = token
             if token is None :
                 self.redirect_to_page('/login')
