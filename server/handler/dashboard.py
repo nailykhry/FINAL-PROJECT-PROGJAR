@@ -16,11 +16,22 @@ class DashboardClass :
         # perbarui data dengan list course sesungguhnya
         coursesObj = CoursesRepo()
         courses = coursesObj.get_all_course()
-        course_list = "".join(f'<li><a href="course/{course["_id"]}">{course["name"]}</a></li>' for course in courses)
+        course_list = "".join(f'''
+            <div class="m-2 text-center shadow card col-2" style="border: none;" onclick="">
+                <a href="course/{course["_id"]}" style="text-decoration:none">
+                <div style="background-color: #84b6ff; height: 100px;"></div>
+                <div class="card-body">
+                <p class="card-subtitle text-muted">{course["_id"]}</p>
+                <h5 class="card-title">{course["name"]}</h5>
+                </div>
+                </a>
+            </div>
+            
+        ''' for course in courses)
         response_data = response_data.replace('{course_list}', course_list)
         
         # kalau bukan admin nanti dihide aja
-        response_data = response_data.replace('{add_course_admin}', '<a href="/addcourse">Tambahkan Course</a>')
+        response_data = response_data.replace('{add_course_admin}', '<a href="/addcourse" class="mx-5 mb-3 btn" style="background-color: #6870CB; color: white; border: none;">+ Course</a>')
 
         content_length = len(response_data)
         response_header = 'HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\nContent-Length:' \
