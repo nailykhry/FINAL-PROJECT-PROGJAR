@@ -74,7 +74,6 @@ class Client(threading.Thread):
 
 
 if __name__ == '__main__':
-    # TODO: Parse and set the host and port from the config file
     with open(os.path.join(BASE_DIR, 'server.conf'), 'r') as file:
         lines = file.readlines()
 

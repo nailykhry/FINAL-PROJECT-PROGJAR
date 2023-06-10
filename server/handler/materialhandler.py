@@ -55,7 +55,7 @@ class MaterialClass :
         request_file = request_header[0].split()[1]
         filename = unquote(request_file.split('/')[-1])
         
-        filepath = os.path.join(BASE_DIR, "..", "public", "files", filename)
+        filepath = os.path.join(BASE_DIR, "..", "public", "files", "materials",filename)
         
         file_extention = os.path.splitext(filepath)[-1]
         response_data = b''

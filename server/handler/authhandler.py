@@ -78,14 +78,9 @@ class AuthHandler :
             return token
     
     def get_bearer_code(self, data):
-        header_lines = data.split('\r\n')
-        
-        authorization_line = next((line for line in header_lines if line.startswith('Authorization: ')), None)
-
-        if authorization_line is not None:
-            authorization = authorization_line.split(' ')[2]
-            return authorization
-        else:
+        try:
+            return data.split('Authorization: ')[1].split('\r\n')[0]
+        except IndexError:
             return None
     
     def check_authentication(self, token):
