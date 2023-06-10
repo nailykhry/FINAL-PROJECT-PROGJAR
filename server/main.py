@@ -1,4 +1,5 @@
 import os
+import re
 import socket
 import select
 import sys
@@ -59,15 +60,17 @@ class Client(threading.Thread):
     def run(self):
         running = 1
         while running:
-            data = self.client.recv(self.size).decode('utf-8')
-            print('received: ', self.address, data)
-            if data:
-                handler = HandlerClass(self.client, self.address, data)
+            data = self.client.recv(self.size)
+            decoded_data = data.decode('utf-8')
+            
+            if decoded_data:
+                handler = HandlerClass(self.client, self.address, decoded_data)
                 handler.run()
-                                                  
+            
             else:
                 self.client.close()
                 running = 0
+            
 
 
 if __name__ == '__main__':
