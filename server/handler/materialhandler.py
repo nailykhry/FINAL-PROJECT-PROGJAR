@@ -20,7 +20,7 @@ class MaterialClass :
         f.close()
         
         # perbarui data dengan list course sesungguhnya
-        material_list = "".join(f'<li><a href="/material/{material["_id"]}" style="color:#6870CB">{material["filename"]}</a></li>' for material in materials)
+        material_list = "".join(f'<li><a href="/material/{material["filename"]}" style="color:#6870CB">{material["filename"]}</a></li>' for material in materials)
         response_data = response_data.replace('{material_list}', material_list)
         
         # kalau bukan admin nanti dihide aja
@@ -48,6 +48,30 @@ class MaterialClass :
             
         # send
         self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
+        
+        
+    def download_material(self, header):
+        request_header = header.split('\r\n')
+        request_file = request_header[0].split()[1]
+        filename = unquote(request_file.split('/')[-1])
+        
+        filepath = os.path.join(BASE_DIR, "..", "public", "files", filename)
+        
+        file_extention = os.path.splitext(filepath)[-1]
+        response_data = b''
+        with open(filepath, 'rb') as f:
+            data = f.read()
+            while(data):
+                response_data = bytes.join(b'', [response_data, data])
+                data = f.read()
+            
+        content_length = len(response_data)
+
+        response_header = b'HTTP/1.1 200 OK\nContent-Type: application/'+file_extention.encode('utf-8')+b'; charset=UTF-8\nContent-Length:' \
+                        + str(content_length).encode('utf-8') + b'\r\n\r\n'
+
+        self.client.sendall(response_header + response_data)
+        
         
     def post_add_material(self, header, filename):
         # split dulu 
