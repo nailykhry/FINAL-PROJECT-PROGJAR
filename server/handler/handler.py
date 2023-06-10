@@ -86,6 +86,10 @@ class HandlerClass():
             materials = MaterialClass(self.client)
             materials = materials.get_add_material()
         
+        elif (method == 'GET' or method == 'HEAD') and request_file.startswith('/material/'):
+            materials = MaterialClass(self.client)
+            materials = materials.download_material(self.data)
+        
         elif (method == 'POST') and request_file == '/material':
             received_data = b""
             file_value = ''
