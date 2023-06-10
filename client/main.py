@@ -29,7 +29,7 @@ class Parser:
         return request_header
     
     def send_request(self, request_header):
-        self.socket.send(request_header)
+        self.socket.sendall(request_header)
         
     def get_header(self):
         header = b''
@@ -108,10 +108,20 @@ if __name__ == '__main__':
         elif request_file == '/register' :
             name, email, password = InputHandler.register()
             request_header = client.add_body(request_header, 'name={}&email={}&password={}'.format(name, email, password))
+        elif request_file == '/course' :
+            name, desc = InputHandler.course()
+            request_header = client.add_body(request_header, 'name={}&description={}'.format(name, desc))
+        elif request_file == '/materials' :
+            InputHandler.material(client, host, token)
+            
 
-    client.send_request(request_header)
+    if method != 'POST' and request_file != '/material' :
+        client.send_request(request_header)
+    
+    # RESPONSE
     b_header, header = client.get_header()
     status_code = client.get_status_code(header)
+    
     if status_code == '302' :
         print(header)
     elif method == 'GET' and request_file.startswith('/material/') :

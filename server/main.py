@@ -61,10 +61,15 @@ class Client(threading.Thread):
         running = 1
         while running:
             data = self.client.recv(self.size)
-            decoded_data = data.decode('utf-8')
+            # decoded_data = data.decode('utf-8')
+            
+            try:
+                decoded_data = data.decode('utf-8')
+            except UnicodeDecodeError as e:
+                decoded_data = data[:e.start].decode('utf-8')
             
             if decoded_data:
-                handler = HandlerClass(self.client, self.address, decoded_data)
+                handler = HandlerClass(self.client, self.address, data, decoded_data)
                 handler.run()
             
             else:
