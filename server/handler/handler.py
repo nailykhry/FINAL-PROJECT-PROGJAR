@@ -10,10 +10,11 @@ from handler.materialhandler import MaterialClass
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 class HandlerClass():
-    def __init__(self, client, address, data, token=''):
+    def __init__(self, client, address, undecoded_data, data, token=''):
         self.client = client
         self.address = address
         self.size = 1024
+        self.undecoded_data = undecoded_data
         self.data = data
         self.header = ''
         self.body = ''
@@ -95,8 +96,7 @@ class HandlerClass():
             file_value = ''
             filename_match = re.search(r'filename=(.+)', data)
             if filename_match:
-                filename = unquote(filename_match.group(1))
-                print(filename)
+                file_value = unquote(filename_match.group(1))
                 flag = False
             else:
                 flag = True
@@ -111,10 +111,11 @@ class HandlerClass():
                     else:
                         file_value = None
    
-                    flag = False
+                    flag = False    
+                received_data += ndata
                 if not ndata or (b'--\r\n' in ndata) :
                     break
-                received_data += ndata
+                
  
             filepath = os.path.join(BASE_DIR, "..", "public", "files", "materials", file_value)
             with open(filepath, 'wb') as file:
@@ -125,6 +126,9 @@ class HandlerClass():
                     
             self.redirect_to_page('/200')
           
+        elif (method == 'POST') and request_file == '/materials':
+            materials = MaterialClass(self.client)
+            materials = materials.handle_cli(self.data, self.undecoded_data)
         
         # END MATERIAL    
         

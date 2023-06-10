@@ -1,4 +1,5 @@
 import os
+import re
 from urllib.parse import unquote
 from models.materialmodel import MaterialModel
 from repository.materialsrepo import MaterialsRepo
@@ -7,6 +8,7 @@ BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 class MaterialClass :  
     def __init__(self, client):
         self.client = client
+        self.size = 1024
         
     def get_material_by_courseid(self, data) :
         request_header = data.split('\r\n')
@@ -89,6 +91,49 @@ class MaterialClass :
             self.redirect_to_page('/200')
         elif err == 500 :
             self.redirect_to_page('/500')
+            
+    def handle_cli(self, data, undecoded_data) :
+        file_content = b''
+        file_value = ''
+        id_course = data.split("id_course=")[1].split('\r\n')[0]
+        id_user = 'weiyvfgewigfiew'
+        
+        filename_match = re.search(r'filename=([^&\r\n]+)', data)
+        if filename_match:
+            file_value = unquote(filename_match.group(1))
+            flag = False
+        else:
+            flag = True
+                
+        while True:
+            data = self.client.recv(self.size)
+            if flag ==  True :
+                file_match = re.search(rb'filename="([^"]+)"', ndata)
+                if file_match:
+                    file_value = file_match.group(1).decode('utf-8')
+                else:
+                    file_value = None
+   
+                flag = False
+                
+            file_content += data
+            
+            if not data or (b'EOF\r\n' in data):
+                break
+            
+        filepath = os.path.join(BASE_DIR, "..", "public", "files", "materials", file_value)
+        file_content = undecoded_data + file_content
+        with open(filepath, 'wb') as file:
+            file.write(file_content)
+            
+        model = MaterialModel(id_course, id_user, file_value)
+        json = model.to_json()
+        
+        repo = MaterialsRepo(json)
+        err = repo.insert_material()
+
+        self.redirect_to_page('/200')
+        
             
     def redirect_to_page(self, url):
         response_header = 'HTTP/1.1 302 Found\nLocation: {}\r\n\r\n'.format(url)
