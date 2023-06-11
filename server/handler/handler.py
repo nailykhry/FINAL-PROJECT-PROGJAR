@@ -129,7 +129,7 @@ class HandlerClass():
             
             if Auth.check_authentication(token):
                 materials = MaterialClass(self.client)
-                materials = materials.get_material_by_courseid(self.data)
+                materials = materials.get_material_by_courseid(self.data, token)
             else:
                 self.redirect_to_page('/login')
         
@@ -206,6 +206,10 @@ class HandlerClass():
         elif (method == 'GET' or method == 'HEAD') and request_file == '/200' :
             status = StatusClass(self.client)
             status.status_200()
+        
+        elif (method == 'GET' or method == 'HEAD') and request_file == '/403' :
+            status = StatusClass(self.client)
+            status.status_403()
         
         elif (method == 'GET' or method == 'HEAD') and request_file == '/500' :
             status = StatusClass(self.client)

@@ -3,6 +3,7 @@ import re
 from urllib.parse import unquote
 from models.materialmodel import MaterialModel
 from repository.materialsrepo import MaterialsRepo
+from security.auth import AuthClass
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 class MaterialClass :  
@@ -10,12 +11,17 @@ class MaterialClass :
         self.client = client
         self.size = 1024
         
-    def get_material_by_courseid(self, data) :
+    def get_material_by_courseid(self, data, token) :
+        # Ambil payload
+        payload = AuthClass.decode_token(token)
+        role = payload['role']
+        
         request_header = data.split('\r\n')
         request_file = request_header[0].split()[1]
         _id = request_file.split('/')[-1]
         materialsObj = MaterialsRepo()
         materials = materialsObj.get_all_material_by_courseid(_id)
+        
         
         f = open(os.path.join(BASE_DIR, '../public/views/course_material.html'), 'r', newline='')
         response_data = f.read()
@@ -25,8 +31,12 @@ class MaterialClass :
         material_list = "".join(f'<li><a href="/material/{material["filename"]}" style="color:#6870CB">{material["filename"]}</a></li>' for material in materials)
         response_data = response_data.replace('{material_list}', material_list)
         
-        # kalau bukan admin nanti dihide aja
-        response_data = response_data.replace('{add_material_admin}', '<a href="/addmaterial/{}" class="m-3 btn col-1" style="background-color: #6870CB; color: white; border: none;">+ Material</a>'.format(_id))
+        # kalau bukan admin/teacher nanti diarahin 403
+        if role == 'user' :
+            response_data = response_data.replace('{add_material_admin}', '<a href="/403" class="m-3 btn col-1" style="background-color: #6870CB; color: white; border: none;">+ Material</a>'.format(_id))
+        else :
+            response_data = response_data.replace('{add_material_admin}', '<a href="/addmaterial/{}" class="m-3 btn col-1" style="background-color: #6870CB; color: white; border: none;">+ Material</a>'.format(_id))
+        
         response_data = response_data.replace('{id_course}', '{}'.format(_id))
 
         content_length = len(response_data)

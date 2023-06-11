@@ -1,5 +1,6 @@
 import os
 from repository.coursesrepo import CoursesRepo
+from security.auth import AuthClass
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 class DashboardClass :  
@@ -8,6 +9,11 @@ class DashboardClass :
         self.token = token
     
     def get_dashboard(self):
+        
+        # Ambil payload
+        payload = AuthClass.decode_token(self.token)
+        role = payload['role']
+        
         script = f"history.pushState(null, '', '/dashboard');"
         f = open(os.path.join(BASE_DIR, '../public/views/dashboard.html'), 'r', newline='')
         response_data = f.read()
@@ -30,8 +36,11 @@ class DashboardClass :
         ''' for course in courses)
         response_data = response_data.replace('{course_list}', course_list)
         
-        # kalau bukan admin nanti dihide aja
-        response_data = response_data.replace('{add_course_admin}', '<a href="/addcourse" class="mx-5 mb-3 btn" style="background-color: #6870CB; color: white; border: none;">+ Course</a>')
+        # kalau bukan admin/teacher nanti di arahin 403
+        if role == 'user' :
+            response_data = response_data.replace('{add_course_admin}', '<a href="/403" class="mx-5 mb-3 btn" style="background-color: #6870CB; color: white; border: none;">+ Course</a>')
+        else :
+            response_data = response_data.replace('{add_course_admin}', '<a href="/addcourse" class="mx-5 mb-3 btn" style="background-color: #6870CB; color: white; border: none;">+ Course</a>')
 
         content_length = len(response_data)
         response_header = 'HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\nContent-Length:' \
