@@ -8,13 +8,7 @@ class CourseClass :
     def __init__(self, client):
         self.client = client
         
-    def get_add_course(self):
-        header_cookie = self.headers.get('Cookie')
-        cookie = cookies.SimpleCookie()
-        cookie.load(header_cookie)
-        token = cookie.get('token').value if 'token' in cookie else None
-        print(token)
-        
+    def get_add_course(self):        
         f = open(os.path.join(
         BASE_DIR, '../public/views/addcourse.html'), 'r', newline='')
         response_data = f.read()
@@ -28,6 +22,7 @@ class CourseClass :
         self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
         
     def post_add_course(self, data):
+        print(data)
         request_header = data.split('\r\n\r\n')[0]
         body = unquote(data.split('\r\n\r\n')[1])
         # ganti + jadi spasi biasa
@@ -39,12 +34,12 @@ class CourseClass :
         
         model = CourseModel(name, description)
         json = model.to_json()
-        
+
         repo = CoursesRepo(json)
         err = repo.insert_course()
-        
+    
         if err == 200 :
-            self.redirect_to_page('/200')
+            self.redirect_to_page('/dashboard')
         elif err == 500 :
             self.redirect_to_page('/500')
             
