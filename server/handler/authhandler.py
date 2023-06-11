@@ -62,7 +62,7 @@ class AuthHandler :
             self.redirect_to_page('/500')
         
     def user_login(self, data):
-        request_header = data.split('\r\n\r\n')[0]
+        request_header = data.split('\r\n')[0]
         body = unquote(data.split('\r\n\r\n')[1])
         email = body.split('email=')[1].split('&')[0]
         password = body.split('password=')[1].split()[0]
@@ -77,7 +77,12 @@ class AuthHandler :
             dashboard.get_dashboard()
             return token
     
+    
     def get_bearer_code(self, data):
+       
+        if 'Cookie: ' in data :
+            return data.split('Cookie: ')[1].split('\r\n')[0]
+        
         try:
             return data.split('Authorization: ')[1].split('\r\n')[0]
         except IndexError:
@@ -94,4 +99,4 @@ class AuthHandler :
         response_header = 'HTTP/1.1 302 Found\nLocation: {}\r\n\r\n'.format(url)
         response_data = ''
         self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
-    
+        
