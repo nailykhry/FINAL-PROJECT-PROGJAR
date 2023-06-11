@@ -79,8 +79,9 @@ class AuthHandler :
     
     
     def get_bearer_code(self, data):
-        # if 'Cookie: ' in data :
-        #     return data.split('Cookie: ')[1].split('\r\n')[0]
+       
+        if 'Cookie: ' in data :
+            return data.split('Cookie: ')[1].split('\r\n')[0]
         
         try:
             return data.split('Authorization: ')[1].split('\r\n')[0]

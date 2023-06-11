@@ -65,6 +65,7 @@ class Client(threading.Thread):
             
             try:
                 decoded_data = data.decode('utf-8')
+    
             except UnicodeDecodeError as e:
                 decoded_data = data[:e.start].decode('utf-8')
             

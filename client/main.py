@@ -20,7 +20,7 @@ class Parser:
         self.socket.connect((self.host, self.port))
 
     def create_request_header(self, method, request_file, token):
-        request_header = (method + ' ' + request_file + ' HTTP/1.1\r\n' + 'Host: ' + host + '\r\n')
+        request_header = (method + ' ' + request_file + ' HTTP/1.1\r\n' + 'Host: ' + self.host + '\r\n')
         if token != '' :
             request_header = (request_header + 'Authorization: ' + token + '\r\n')
      
@@ -94,41 +94,47 @@ if __name__ == '__main__':
     # connect
     client = Parser(host, int(port))
     client.connect()
-    
-    method = input('Masukkan method : ')
-    request_file = input('Masukkan request file : ')
-    token = input('Masukkan token : ')
-    
-    request_header = client.create_request_header(method, request_file, token)
-    
-    if method == 'POST' :
-        if request_file == '/login' :
-            email, password = InputHandler.login()
-            request_header = client.add_body(request_header, 'email={}&password={}'.format(email, password))
-        elif request_file == '/register' :
-            name, email, password = InputHandler.register()
-            request_header = client.add_body(request_header, 'name={}&email={}&password={}'.format(name, email, password))
-        elif request_file == '/course' :
-            name, desc = InputHandler.course()
-            request_header = client.add_body(request_header, 'name={}&description={}'.format(name, desc))
-        elif request_file == '/materials' :
-            InputHandler.material(client, host, token)
-            
 
-    if method != 'POST' and request_file != '/material' :
-        client.send_request(request_header)
-    
-    # RESPONSE
-    b_header, header = client.get_header()
-    status_code = client.get_status_code(header)
-    
-    if status_code == '302' or status_code == '301':
-        print(header)
-    elif method == 'GET' and request_file.startswith('/material/') :
-        filename = unquote(request_file.split('/')[-1])
-        client.download_file(b_header, filename)
-    else :
-        print(client.parsing_html(header))
-        
-    client.disconnect()
-    
+    try:
+        while True:
+            method = input('Masukkan method : ')
+            request_file = input('Masukkan request file : ')
+            token = input('Masukkan token : ')
+
+            request_header = client.create_request_header(method, request_file, token)
+
+            if method == 'POST':
+                if request_file == '/login':
+                    email, password = InputHandler.login()
+                    request_header = client.add_body(request_header, 'email={}&password={}\r\n\r\n'.format(email, password))
+                elif request_file == '/register':
+                    name, email, password = InputHandler.register()
+                    request_header = client.add_body(request_header, 'name={}&email={}&password={}'.format(name, email, password))
+                elif request_file == '/course':
+                    name, desc = InputHandler.course()
+                    request_header = client.add_body(request_header, 'name={}&description={}'.format(name, desc))
+                elif request_file == '/materials':
+                    InputHandler.material(client, host, token)
+
+            if (method == 'POST' and request_file == '/material'):
+                pass
+            else:
+                print(request_header)
+                client.send_request(request_header)
+
+            # RESPONSE
+            b_header, header = client.get_header()
+            status_code = client.get_status_code(header)
+
+            if status_code == '302' or status_code == '301':
+                print(header)
+            elif method == 'GET' and request_file.startswith('/material/'):
+                filename = unquote(request_file.split('/')[-1])
+                client.download_file(b_header, filename)
+            else:
+                print(client.parsing_html(header))
+
+    except KeyboardInterrupt:
+        print("Keyboard Interrupt detected. Closing connection...")
+    finally:
+        client.disconnect()
