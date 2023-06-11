@@ -1,6 +1,6 @@
 import json
 class MaterialModel:
-    def __init__(self, id_course, id_user, filename):
+    def __init__(self, id_course, filename):
         self.id_course = id_course
         self.filename = filename
 
