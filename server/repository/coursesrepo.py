@@ -24,12 +24,12 @@ class CoursesRepo():
             if process.is_alive():
                 process.terminate()
                 process.join()
-                return 500
+                return '500'
             else:
-                return 200
+                return '200'
 
         except Exception as e:
-            return 500  
+            return '500'  
     
     
     def get_all_course(self):

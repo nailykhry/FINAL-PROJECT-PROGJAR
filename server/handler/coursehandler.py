@@ -40,10 +40,10 @@ class CourseClass :
 
         repo = CoursesRepo(json)
         err = repo.insert_course()
-    
-        if err == 200 :
+
+        if err == '200' :
             self.redirect_to_page('/dashboard')
-        elif err == 500 :
+        elif err == '500' :
             self.redirect_to_page('/500')
             
     def redirect_to_page(self, url):

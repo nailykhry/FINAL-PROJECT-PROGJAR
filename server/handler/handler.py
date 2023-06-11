@@ -120,12 +120,8 @@ class HandlerClass():
                 self.redirect_to_page('/login')
             
         elif method == 'POST' and request_file == '/course' :
-            while True :
-                rcv = self.client.recv(1024)
-                self.data += rcv.decode('utf-8')
-                if not rcv or (b'description=' in rcv):
-                    # print("Seleseeeeeeeeeeee")
-                    break
+            # rcv = self.client.recv(1024)
+            # self.data += rcv.decode('utf-8')
             
             course = CourseClass(self.client)
             course.post_add_course(self.data)
