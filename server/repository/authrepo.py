@@ -16,7 +16,7 @@ class AuthRepo():
 
     def register(self):
         try:
-            timeout = 5 
+            timeout = 2
 
             process = multiprocessing.Process(target=self.insert_user_with_timeout, args=(timeout,))
             process.start()
@@ -26,12 +26,12 @@ class AuthRepo():
             if process.is_alive():
                 process.terminate()
                 process.join()
-                return 500
+                return '500'
             else:
-                return 200
+                return '200'
 
         except Exception as e:
-            return 500  
+            return '500'  
         
     def login(self, email, password) :
         user = Database()

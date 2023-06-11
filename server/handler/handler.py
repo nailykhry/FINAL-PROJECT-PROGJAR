@@ -52,7 +52,7 @@ class HandlerClass():
         elif (method == 'GET' or method == 'HEAD') and request_file == '/login':
             if token is None :
                 auth = AuthHandler(self.client)
-                auth.get_login()
+                auth.get_login(method)
             else:
                 if Auth.check_authentication(token):
                     self.redirect_to_page('/dashboard') 
@@ -67,7 +67,7 @@ class HandlerClass():
         elif (method == 'GET' or method == 'HEAD') and request_file == '/register':
             if token is None :
                 auth = AuthHandler(self.client)
-                auth.get_register()
+                auth.get_register(method)
             else:
                 if Auth.check_authentication(token):
                     self.redirect_to_page('/dashboard') 
@@ -87,9 +87,25 @@ class HandlerClass():
             
             if Auth.check_authentication(token):
                 dashboard = DashboardClass(self.client, self.token)
-                dashboard.get_dashboard()
+                dashboard.get_dashboard(method)
             else:
                 self.redirect_to_page('/login')
+                
+        elif (method == 'GET' or method == 'HEAD') and request_file == '/help':
+            help_view = DashboardClass(self.client)
+            help_view.get_help(method)
+            
+        elif (method == 'GET' or method == 'HEAD') and request_file == '/profile':
+            if token is None :
+                self.redirect_to_page('/login')
+            
+            if Auth.check_authentication(token):
+                profile = DashboardClass(self.client)
+                profile.get_profile(method, token)
+                
+            else:
+                self.redirect_to_page('/login')
+            
         # END DASHBOARD
         
         #COURSE
@@ -99,7 +115,7 @@ class HandlerClass():
             
             if Auth.check_authentication(token):
                 course = CourseClass(self.client)
-                course.get_add_course()
+                course.get_add_course(method)
             else:
                 self.redirect_to_page('/login')
             
@@ -129,7 +145,7 @@ class HandlerClass():
             
             if Auth.check_authentication(token):
                 materials = MaterialClass(self.client)
-                materials = materials.get_material_by_courseid(self.data, token)
+                materials = materials.get_material_by_courseid(self.data, token, method)
             else:
                 self.redirect_to_page('/login')
         
@@ -139,7 +155,7 @@ class HandlerClass():
             
             if Auth.check_authentication(token):
                 materials = MaterialClass(self.client)
-                materials = materials.get_add_material()
+                materials = materials.get_add_material(method)
             else:
                 self.redirect_to_page('/login')
         
@@ -149,7 +165,7 @@ class HandlerClass():
             
             if Auth.check_authentication(token):
                 materials = MaterialClass(self.client)
-                materials = materials.download_material(self.data)
+                materials = materials.download_material(self.data, method)
             else:
                 self.redirect_to_page('/login')
         
@@ -205,19 +221,19 @@ class HandlerClass():
         #STATUS
         elif (method == 'GET' or method == 'HEAD') and request_file == '/200' :
             status = StatusClass(self.client)
-            status.status_200()
+            status.status_200(method)
         
         elif (method == 'GET' or method == 'HEAD') and request_file == '/403' :
             status = StatusClass(self.client)
-            status.status_403()
+            status.status_403(method)
         
         elif (method == 'GET' or method == 'HEAD') and request_file == '/500' :
             status = StatusClass(self.client)
-            status.status_500()
+            status.status_500(method)
         
         else:
             status = StatusClass(self.client)
-            status.status_404()
+            status.status_404(method)
         
     
     def redirect_to_page(self, url):

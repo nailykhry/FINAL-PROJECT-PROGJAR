@@ -8,7 +8,7 @@ class DashboardClass :
         self.client = client
         self.token = token
     
-    def get_dashboard(self):
+    def get_dashboard(self, method='GET'):
         
         # Ambil payload
         payload = AuthClass.decode_token(self.token)
@@ -50,4 +50,48 @@ class DashboardClass :
         response_header += '\r\n'
 
         # send
-        self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else :
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
+            
+    def get_help(self, method):
+        f = open(os.path.join(
+        BASE_DIR, '../public/views/help.html'), 'r', newline='')
+        response_data = f.read()
+        f.close()
+
+        content_length = len(response_data)
+        response_header = 'HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\nContent-Length:' \
+            + str(content_length) + '\r\n\r\n'
+            
+        # send
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else :
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
+            
+    def get_profile(self, method, token):
+        # Ambil payload
+        payload = AuthClass.decode_token(token)
+        name = payload['name']
+        email = payload['email']
+        
+        script = f"history.pushState(null, '', '/dashboard');"
+        f = open(os.path.join(BASE_DIR, '../public/views/profile.html'), 'r', newline='')
+        response_data = f.read()
+        f.close()
+        
+        response_data = response_data.replace('{detail_profile}', '<h3>Nama  :  {}<br>Email  :  {}</h3>'.format(name, email))
+    
+        content_length = len(response_data)
+        response_header = 'HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\nContent-Length:' \
+            + str(content_length) + '\r\n'
+        response_header += f'Authorization: {self.token}\r\n'
+        response_header += '\r\n'
+
+        # send
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else :
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))

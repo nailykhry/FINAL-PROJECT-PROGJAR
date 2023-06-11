@@ -11,7 +11,7 @@ class MaterialClass :
         self.client = client
         self.size = 1024
         
-    def get_material_by_courseid(self, data, token) :
+    def get_material_by_courseid(self, data, token, method) :
         # Ambil payload
         payload = AuthClass.decode_token(token)
         role = payload['role']
@@ -46,9 +46,12 @@ class MaterialClass :
         response_header += '\r\n'
 
         # send
-        self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else :
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
         
-    def get_add_material(self):
+    def get_add_material(self, method):
         f = open(os.path.join(
         BASE_DIR, '../public/views/addmaterial.html'), 'r', newline='')
         response_data = f.read()
@@ -59,10 +62,13 @@ class MaterialClass :
             + str(content_length) + '\r\n\r\n'
             
         # send
-        self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else :
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
         
         
-    def download_material(self, header):
+    def download_material(self, header, method):
         request_header = header.split('\r\n')
         request_file = request_header[0].split()[1]
         filename = unquote(request_file.split('/')[-1])
@@ -82,16 +88,18 @@ class MaterialClass :
         response_header = b'HTTP/1.1 200 OK\nContent-Type: application/'+file_extention.encode('utf-8')+b'; charset=UTF-8\nContent-Length:' \
                         + str(content_length).encode('utf-8') + b'\r\n\r\n'
 
-        self.client.sendall(response_header + response_data)
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else :
+            self.client.sendall(response_header + response_data)
         
         
     def post_add_material(self, header, filename):
         # split dulu 
         referer = header.split('Referer: ')[1].split('\r\n')[0]
         id_course = referer.split('/')[-1]
-        id_user = 'weiyvfgewigfiew'
  
-        model = MaterialModel(id_course, id_user, filename)
+        model = MaterialModel(id_course, filename)
         json = model.to_json()
         
         repo = MaterialsRepo(json)
@@ -106,7 +114,6 @@ class MaterialClass :
         file_content = b''
         file_value = ''
         id_course = data.split("id_course=")[1].split('\r\n')[0]
-        id_user = 'weiyvfgewigfiew'
         
         filename_match = re.search(r'filename=([^&\r\n]+)', data)
         if filename_match:
@@ -136,7 +143,7 @@ class MaterialClass :
         with open(filepath, 'wb') as file:
             file.write(file_content)
             
-        model = MaterialModel(id_course, id_user, file_value)
+        model = MaterialModel(id_course,  file_value)
         json = model.to_json()
         
         repo = MaterialsRepo(json)

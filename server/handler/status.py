@@ -4,7 +4,7 @@ class StatusClass :
     def __init__(self, client):
         self.client = client
         
-    def status_200(self):
+    def status_200(self, method):
         f = open(os.path.join(
         BASE_DIR, '../public/views/status/200.html'), 'r', newline='')
         response_data = f.read()
@@ -15,10 +15,13 @@ class StatusClass :
             + str(content_length) + '\r\n\r\n'
             
         # send
-        self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))    
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else :
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))   
     
         
-    def status_500(self):
+    def status_500(self, method):
         f = open(os.path.join(
         BASE_DIR, '../public/views/status/500.html'), 'r', newline='')
         response_data = f.read()
@@ -29,9 +32,12 @@ class StatusClass :
             + str(content_length) + '\r\n\r\n'
             
         # send
-        self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else :
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
         
-    def status_404(self):
+    def status_404(self, method):
         f = open(os.path.join(
         BASE_DIR, '../public/views/status/404.html'), 'r', newline='')
         response_data = f.read()
@@ -42,9 +48,12 @@ class StatusClass :
             + str(content_length) + '\r\n\r\n'
             
         # send
-        self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else :
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
         
-    def status_403(self):
+    def status_403(self, method):
         f = open(os.path.join(
         BASE_DIR, '../public/views/status/403.html'), 'r', newline='')
         response_data = f.read()
@@ -55,4 +64,7 @@ class StatusClass :
             + str(content_length) + '\r\n\r\n'
             
         # send
-        self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else :
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))

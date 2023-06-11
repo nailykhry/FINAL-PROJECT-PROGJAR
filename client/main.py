@@ -122,14 +122,13 @@ if __name__ == '__main__':
             if (method == 'POST' and request_file == '/material'):
                 pass
             else:
-                print(request_header)
                 client.send_request(request_header)
 
             # RESPONSE
             b_header, header = client.get_header()
             status_code = client.get_status_code(header)
 
-            if status_code == '302' or status_code == '301':
+            if status_code == '302' or status_code == '301' or method == 'HEAD':
                 print(header)
             elif method == 'GET' and request_file.startswith('/material/'):
                 filename = unquote(request_file.split('/')[-1])
