@@ -3,6 +3,7 @@ import os
 from urllib.parse import unquote
 from inputhandler import InputHandler
 from bs4 import BeautifulSoup
+import configparser
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -85,11 +86,13 @@ class Parser:
         self.socket.close()
 
 if __name__ == '__main__':
-    with open(os.path.join(BASE_DIR, 'client.conf'), 'r') as file:
-        lines = file.readlines()
+    # membaca file konfigurasi
+    config = configparser.ConfigParser()
+    config.read('client/client.conf')
 
-    host = lines[1][5:14]
-    port = lines[0][5:9]
+    # mengambil data port dan host
+    port = config['server']['port']
+    host = config['server']['host']
 
     # connect
     client = Parser(host, int(port))
