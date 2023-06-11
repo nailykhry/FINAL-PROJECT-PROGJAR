@@ -108,7 +108,7 @@ class HandlerClass():
                 rcv = self.client.recv(1024)
                 self.data += rcv.decode('utf-8')
                 if not rcv or (b'description=' in rcv):
-                    print("Seleseeeeeeeeeeee")
+                    # print("Seleseeeeeeeeeeee")
                     break
             
             course = CourseClass(self.client)

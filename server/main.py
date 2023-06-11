@@ -5,6 +5,7 @@ import select
 import sys
 import threading
 from handler.handler import HandlerClass
+import configparser
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -80,11 +81,13 @@ class Client(threading.Thread):
 
 
 if __name__ == '__main__':
-    with open(os.path.join(BASE_DIR, 'server.conf'), 'r') as file:
-        lines = file.readlines()
+    # membaca file konfigurasi
+    config = configparser.ConfigParser()
+    config.read('server/server.conf')
 
-    host = lines[1][5:14]
-    port = lines[0][5:9]
+    # mengambil data port dan host
+    port = config['server']['port']
+    host = config['server']['host']
 
     server = HTTPServer(host, int(port))
     server.run()
