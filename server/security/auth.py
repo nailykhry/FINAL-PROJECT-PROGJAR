@@ -17,14 +17,6 @@ class AuthClass:
         except jwt.InvalidTokenError:
             return None
 
-    # @staticmethod
-    # def login(username, password):
-    #     if username == 'john' and password == 'secret':
-    #         token = AuthClass.generate_token(username)
-    #         return token
-
-    #     return None
-
     @staticmethod
     def protected(token):
         payload = AuthClass.decode_token(token)
@@ -42,15 +34,3 @@ class AuthClass:
         except jwt.InvalidTokenError:
             return False
         
-
-
-# # Login dan dapatkan token
-# token = AuthClass.login('john', 'secret')
-# if token:
-#     print("Token:", token)
-# else:
-#     print("Invalid username or password.")
-
-# # Gunakan token untuk mengakses rute yang dilindungi
-# response = AuthClass.protected(token)
-# print(response)

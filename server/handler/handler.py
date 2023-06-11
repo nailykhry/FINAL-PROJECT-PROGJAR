@@ -28,7 +28,13 @@ class HandlerClass():
         method = request_header[0].split()[0]
         response_header = b''
         response_data = b''
-        print(data)
+        
+        Auth = AuthHandler(self.client)
+        token = Auth.get_bearer_code(self.data)
+        
+        self.token = token
+        print(token)
+        
         if (method == 'GET' or method == 'HEAD') and (request_file == '/' or request_file == '/index.html'):
             self.index()
         
@@ -41,8 +47,14 @@ class HandlerClass():
         
         # AUTH
         elif (method == 'GET' or method == 'HEAD') and request_file == '/login':
-            auth = AuthHandler(self.client)
-            auth.get_login()
+            if token is None :
+                auth = AuthHandler(self.client)
+                auth.get_login()
+            else:
+                if Auth.check_authentication(token):
+                    self.redirect_to_page('/dashboard') 
+                else:
+                    self.redirect_to_page('/login')
             
         elif method == 'POST' and request_file == '/login':
             auth = AuthHandler(self.client)
@@ -50,20 +62,23 @@ class HandlerClass():
             self.token = token
         
         elif (method == 'GET' or method == 'HEAD') and request_file == '/register':
-            auth = AuthHandler(self.client)
-            auth.get_register()  
+            if token is None :
+                auth = AuthHandler(self.client)
+                auth.get_register()
+            else:
+                if Auth.check_authentication(token):
+                    self.redirect_to_page('/dashboard') 
+                else:
+                    self.redirect_to_page('/login')  
         
         elif method == 'POST' and request_file == '/register':
             auth = AuthHandler(self.client)
-            auth.user_register(self.data)  
+            auth.user_register(self.data)
+              
         # END AUTH
            
         # DASHBOARD
         elif (method == 'GET' or method == 'HEAD') and request_file == '/dashboard':
-            Auth = AuthHandler(self.client)
-            token = Auth.get_bearer_code(self.data)
-            
-            self.token = token
             if token is None :
                 self.redirect_to_page('/login')
             
@@ -76,27 +91,57 @@ class HandlerClass():
         
         #COURSE
         elif (method == 'GET' or method == 'HEAD') and request_file == '/addcourse' :
-            course = CourseClass(self.client)
-            course.get_add_course()
+            if token is None :
+                self.redirect_to_page('/login')
+            
+            if Auth.check_authentication(token):
+                course = CourseClass(self.client)
+                course.get_add_course()
+            else:
+                self.redirect_to_page('/login')
             
         elif method == 'POST' and request_file == '/course' :
-            course = CourseClass(self.client)
-            course.post_add_course(self.data)
+            if token is None :
+                self.redirect_to_page('/login')
+            
+            if Auth.check_authentication(token):
+                course = CourseClass(self.client)
+                course.post_add_course(self.data)
+            else:
+                self.redirect_to_page('/login')
         
         #END COURSE
         
         # MATERIAL
         elif (method == 'GET' or method == 'HEAD') and request_file.startswith('/course/'):
-            materials = MaterialClass(self.client)
-            materials = materials.get_material_by_courseid(self.data)
+            if token is None :
+                self.redirect_to_page('/login')
+            
+            if Auth.check_authentication(token):
+                materials = MaterialClass(self.client)
+                materials = materials.get_material_by_courseid(self.data)
+            else:
+                self.redirect_to_page('/login')
         
         elif (method == 'GET' or method == 'HEAD') and request_file.startswith('/addmaterial/'):
-            materials = MaterialClass(self.client)
-            materials = materials.get_add_material()
+            if token is None :
+                self.redirect_to_page('/login')
+            
+            if Auth.check_authentication(token):
+                materials = MaterialClass(self.client)
+                materials = materials.get_add_material()
+            else:
+                self.redirect_to_page('/login')
         
         elif (method == 'GET' or method == 'HEAD') and request_file.startswith('/material/'):
-            materials = MaterialClass(self.client)
-            materials = materials.download_material(self.data)
+            if token is None :
+                self.redirect_to_page('/login')
+            
+            if Auth.check_authentication(token):
+                materials = MaterialClass(self.client)
+                materials = materials.download_material(self.data)
+            else:
+                self.redirect_to_page('/login')
         
         elif (method == 'POST') and request_file == '/material':
             received_data = b""
@@ -133,8 +178,14 @@ class HandlerClass():
             self.redirect_to_page('/200')
           
         elif (method == 'POST') and request_file == '/materials':
-            materials = MaterialClass(self.client)
-            materials = materials.handle_cli(self.data, self.undecoded_data)
+            if token is None :
+                self.redirect_to_page('/login')
+            
+            if Auth.check_authentication(token):
+                materials = MaterialClass(self.client)
+                materials = materials.handle_cli(self.data, self.undecoded_data)
+            else:
+                self.redirect_to_page('/login')
         
         # END MATERIAL    
         
