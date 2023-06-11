@@ -113,6 +113,10 @@ class HandlerClass():
             
             course = CourseClass(self.client)
             course.post_add_course(self.data)
+            
+        elif method == 'POST' and request_file == '/courses' :
+            course = CourseClass(self.client)
+            course.post_add_course(self.data)
           
         
         #END COURSE

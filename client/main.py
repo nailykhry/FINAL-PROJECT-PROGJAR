@@ -110,7 +110,7 @@ if __name__ == '__main__':
                 elif request_file == '/register':
                     name, email, password = InputHandler.register()
                     request_header = client.add_body(request_header, 'name={}&email={}&password={}'.format(name, email, password))
-                elif request_file == '/course':
+                elif request_file == '/courses':
                     name, desc = InputHandler.course()
                     request_header = client.add_body(request_header, 'name={}&description={}'.format(name, desc))
                 elif request_file == '/materials':
