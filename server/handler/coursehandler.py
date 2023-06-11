@@ -8,7 +8,7 @@ class CourseClass :
     def __init__(self, client):
         self.client = client
         
-    def get_add_course(self):        
+    def get_add_course(self, method):        
         f = open(os.path.join(
         BASE_DIR, '../public/views/addcourse.html'), 'r', newline='')
         response_data = f.read()
@@ -19,7 +19,10 @@ class CourseClass :
             + str(content_length) + '\r\n\r\n'
             
         # send
-        self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else : 
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
         
     def post_add_course(self, data):
         print(data)

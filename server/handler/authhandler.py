@@ -12,7 +12,7 @@ class AuthHandler :
     def __init__(self, client):
         self.client = client
         
-    def get_login(self):
+    def get_login(self, method, warning = ''):
         f = open(os.path.join(
         BASE_DIR, '../public/views/login.html'), 'r', newline='')
         response_data = f.read()
@@ -21,11 +21,16 @@ class AuthHandler :
         content_length = len(response_data)
         response_header = 'HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\nContent-Length:' \
             + str(content_length) + '\r\n\r\n'
-            
-        # send
-        self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8')) 
         
-    def get_register(self):
+        response_data = response_data.replace('{invalid_data}', warning)    
+        
+        # send
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else :
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8')) 
+        
+    def get_register(self, method):
         f = open(os.path.join(
         BASE_DIR, '../public/views/register.html'), 'r', newline='')
         response_data = f.read()
@@ -36,7 +41,10 @@ class AuthHandler :
             + str(content_length) + '\r\n\r\n'
             
         # send
-        self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8'))
+        if method == 'HEAD' :
+            self.client.sendall(response_header.encode('utf-8'))
+        else :
+            self.client.sendall(response_header.encode('utf-8') + response_data.encode('utf-8')) 
     
     def user_register(self, data):
         request_header = data.split('\r\n\r\n')[0]
@@ -56,9 +64,9 @@ class AuthHandler :
         repo = AuthRepo(json)
         err = repo.register()
         
-        if err == 200 :
+        if err == '200' :
             self.redirect_to_page('/login')
-        elif err == 500 :
+        else :
             self.redirect_to_page('/500')
         
     def user_login(self, data):
@@ -68,16 +76,16 @@ class AuthHandler :
         password = body.split('password=')[1].split()[0]
         hashed_password = HashClass.hash_password(password)
         
-        repo = AuthRepo("null")
+        repo = AuthRepo()
         token = repo.login(email, password)
         if token is None :
-            self.redirect_to_page('/login')
+            self.get_login('GET', "Invalid data, try again!")
         else :
             dashboard = DashboardClass(self.client, token)
             dashboard.get_dashboard()
             return token
     
-    
+        
     def get_bearer_code(self, data):
        
         if 'Cookie: ' in data :
