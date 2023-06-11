@@ -24,7 +24,11 @@ class HandlerClass():
         data = self.data
         request_header = data.split('\r\n')
         self.header = request_header
-        request_file = request_header[0].split()[1]
+        try:
+            request_file = request_header[0].split()[1]
+        except IndexError:
+            print(request_header)
+            
         method = request_header[0].split()[0]
         response_header = b''
         response_data = b''
@@ -39,7 +43,6 @@ class HandlerClass():
             self.index()
         
         # MOVED PERMANENTLY
-        
         if (method == 'GET' or method == 'HEAD') and (request_file == '/index.php'):
             response_header = 'HTTP/1.1 301 Moved Permanently\nLocation: /index.html\r\n\r\n'
             response_data = ''
@@ -101,16 +104,19 @@ class HandlerClass():
                 self.redirect_to_page('/login')
             
         elif method == 'POST' and request_file == '/course' :
-            if token is None :
-                self.redirect_to_page('/login')
+            while True :
+                rcv = self.client.recv(1024)
+                self.data += rcv.decode('utf-8')
+                if not rcv or (b'description=' in rcv):
+                    print("Seleseeeeeeeeeeee")
+                    break
             
-            if Auth.check_authentication(token):
-                course = CourseClass(self.client)
-                course.post_add_course(self.data)
-            else:
-                self.redirect_to_page('/login')
+            course = CourseClass(self.client)
+            course.post_add_course(self.data)
+          
         
         #END COURSE
+        
         
         # MATERIAL
         elif (method == 'GET' or method == 'HEAD') and request_file.startswith('/course/'):
@@ -146,7 +152,8 @@ class HandlerClass():
         elif (method == 'POST') and request_file == '/material':
             received_data = b""
             file_value = ''
-            filename_match = re.search(r'filename=(.+)', data)
+    
+            filename_match = re.search(r'filename=([^&\r\n]+)', data)
             if filename_match:
                 file_value = unquote(filename_match.group(1))
                 flag = False
@@ -157,6 +164,7 @@ class HandlerClass():
             while True:
                 ndata = self.client.recv(self.size)
                 if flag ==  True :
+                    print(ndata)
                     file_match = re.search(rb'filename="([^"]+)"', ndata)
                     if file_match:
                         file_value = file_match.group(1).decode('utf-8')
@@ -167,7 +175,8 @@ class HandlerClass():
                 received_data += ndata
                 if not ndata or (b'--\r\n' in ndata) :
                     break
-                
+            
+            print("fileeeeeeeeeee", file_value)
             filepath = os.path.join(BASE_DIR, "..", "public", "files", "materials", file_value)
             with open(filepath, 'wb') as file:
                 file.write(received_data)
