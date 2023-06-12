@@ -6,6 +6,7 @@ from handler.dashboard import DashboardClass
 from handler.status import StatusClass
 from handler.coursehandler import CourseClass
 from handler.materialhandler import MaterialClass
+from handler.taskhandler import TaskClass
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -213,6 +214,50 @@ class HandlerClass():
                 self.redirect_to_page('/login')
         
         # END MATERIAL    
+        
+        # START TASK
+        elif (method == 'GET' or method == 'HEAD') and request_file == ('/task'):
+            if token is None :
+                self.redirect_to_page('/login')
+            
+            if Auth.check_authentication(token):
+                tasks = TaskClass(self.client)
+                tasks = tasks.get_tasks(token, method)
+            else:
+                self.redirect_to_page('/login')
+                
+        elif (method == 'GET' or method == 'HEAD') and request_file == ('/addtask'):
+            if token is None :
+                self.redirect_to_page('/login')
+            
+            if Auth.check_authentication(token):
+                tasks = TaskClass(self.client)
+                tasks = tasks.get_add_task(method)
+            else:
+                self.redirect_to_page('/login')
+                
+        elif method == 'POST' and request_file == ('/task'):
+            if token is None :
+                self.redirect_to_page('/login')
+            
+            if Auth.check_authentication(token):
+                tasks = TaskClass(self.client)
+                tasks = tasks.post_add_task(self.data)
+            else:
+                self.redirect_to_page('/login')
+                
+        elif (method == 'GET' or method == 'HEAD') and request_file.startswith('/task/'):
+            if token is None :
+                self.redirect_to_page('/login')
+            
+            if Auth.check_authentication(token):
+                tasks = TaskClass(self.client)
+                tasks = tasks.get_task_detail(self.data, method)
+            else:
+                self.redirect_to_page('/login')
+        
+        # END TASK
+        
         
         #STATUS
         elif (method == 'GET' or method == 'HEAD') and request_file == '/200' :

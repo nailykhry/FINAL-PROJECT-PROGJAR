@@ -1,6 +1,8 @@
 from database.db import Database
 import json
-class MaterialsRepo():
+from bson.objectid import ObjectId
+
+class TasksRepo():
     def __init__(self, data=''):
         self.data = data
         
@@ -14,5 +16,21 @@ class MaterialsRepo():
         taskObj = Database(collection="tasks")
         tasks = taskObj.get_all()
         return tasks
-
+    
+    def find_one_task(self, string_id) :
+        taskObj = Database(collection="tasks")
+        object_id = self.convert_to_objectid(string_id)
+        task = taskObj.find_one_by_id(object_id)
         
+        if task:
+            return task
+        else:
+            return None
+
+    
+    def convert_to_objectid(self, string_id):
+        try:
+            object_id = ObjectId(string_id)
+            return object_id
+        except Exception as e:
+            print("Error converting to ObjectId:", str(e))

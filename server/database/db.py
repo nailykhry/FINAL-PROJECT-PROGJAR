@@ -25,6 +25,11 @@ class Database:
         query = {'id_course': id}
         collections = self.collection.find(query)
         return collections
+    
+    def find_one_by_id(self, id) :
+        query = {"_id": id}
+        collection = self.collection.find_one(query)
+        return collection
 
     def close_connection(self):
         self.client.close()
