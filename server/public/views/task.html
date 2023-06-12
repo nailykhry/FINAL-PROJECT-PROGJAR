@@ -20,7 +20,7 @@
               <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="#">Task</a>
+              <a class="nav-link active" href="/task">Task</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/help">Help</a>
@@ -38,20 +38,13 @@
     </div>
 
     <!-- Button Add Task -->
-    <button class="btn col-1 mx-5 mt-3 mb-3 shadow" style="background-color: #6870CB; color: white; border: none;">+ Task</button>
+    <div>
+      {add_task_admin}
+    </div>
 
     <!-- Card Task -->
-    <div class="card mx-5 mb-3 shadow" style="border: none;">
-        <div class="card-body">
-            <h5 class="card-title">Task 1</h5>
-            <p class="card-text">Id Task | Course Name | Due Date: ...</p>
-        </div>
-    </div>
-    <div class="card mx-5 mb-3 shadow" style="border: none;">
-        <div class="card-body">
-            <h5 class="card-title">Task 2</h5>
-            <p class="card-text">Id Task | Course Name | Due Date: ...</p>
-        </div>
+    <div>
+      {list_task}
     </div>
 </body>
 </html>
