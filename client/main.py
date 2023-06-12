@@ -50,9 +50,6 @@ class Parser:
         return request_header + data.encode('utf-8') 
     
     def download_file(self, header, filename):
-        if not os.path.exists('downloads'):
-            os.mkdir('downloads')
-            
         filepath = os.path.join(BASE_DIR, "downloads", filename)
         
         with open(filepath, 'wb') as f:

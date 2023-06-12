@@ -110,6 +110,9 @@ class MaterialClass :
         elif err == 500 :
             self.redirect_to_page('/500')
             
+        response_header = b'HTTP/1.1 200 OK\n' +  '\r\n\r\n'
+        self.client.sendall(response_header.encode('utf-8'))
+            
     def handle_cli(self, data, undecoded_data) :
         file_content = b''
         file_value = ''
@@ -150,6 +153,9 @@ class MaterialClass :
         err = repo.insert_material()
 
         self.redirect_to_page('/200')
+        
+        response_header = b'HTTP/1.1 200 OK\n' +  '\r\n\r\n'
+        self.client.sendall(response_header.encode('utf-8'))
         
             
     def redirect_to_page(self, url):
